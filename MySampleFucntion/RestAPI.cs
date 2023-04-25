@@ -10,17 +10,19 @@ using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using MySampleFucntion.Models;
- 
+using MySampleFucntion.Services;
+using System.Text.Json;
+
 namespace MySampleFucntion
 {
     public  class RestAPI
     {
-        private readonly CompanyContext _context;
-
-        public RestAPI(CompanyContext context)
-        {
-            _context = context;
-        }
+        private readonly CompanyContext _context = new CompanyContext();
+        ClsMessaging messaging = new ClsMessaging();
+        //public RestAPI(CompanyContext context)
+        //{
+        //    _context = context;
+        //}
 
         [FunctionName("Get")]
         public async Task<IActionResult> Get(
@@ -74,10 +76,12 @@ namespace MySampleFucntion
             try
             {
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-                Department Departments = JsonConvert.DeserializeObject<Department>(requestBody);
-                var prd = await _context.Departments.AddAsync(Departments);
+                Department Department = JsonConvert.DeserializeObject<Department>(requestBody);
+                var dept = await _context.Departments.AddAsync(Department);
                 await _context.SaveChangesAsync();
-                return new OkObjectResult(prd.Entity);
+                // Add the Data in Queue
+                await messaging.AddMessageAsync(System.Text.Json.JsonSerializer.Serialize(Department));
+                return new OkObjectResult(dept.Entity);
             }
             catch (Exception ex)
             {
