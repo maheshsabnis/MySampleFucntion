@@ -12,7 +12,7 @@ namespace MySampleFucntion.Services
     {
         public async Task AddMessageAsync(string data)
         {
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=msitstorageaccount;AccountKey=HCB2Oc6LHBMA7FAiSu9JAyAorap+nFYh7lzfxPUXyL8jWcPZa84YY1eeI0hETp5fYWUGS4yXL/DA+AStyqbTDA==;EndpointSuffix=core.windows.net");
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse("CONN");
             CloudQueueClient cloudQueueClient = storageAccount.CreateCloudQueueClient();
             CloudQueue cloudQueue = cloudQueueClient.GetQueueReference("myqueue-items");
             CloudQueueMessage queueMessage = new CloudQueueMessage(data);
